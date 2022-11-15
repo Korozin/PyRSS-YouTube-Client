@@ -1,6 +1,4 @@
 ##### imports #####
-import sys
-import os
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -9,17 +7,9 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAc
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 from time import sleep
-from threading import Thread, RLock
 import sys
 import os
-import struct
-import time
 import os.path
-import socket, sys
-from threading import Thread, RLock
-import py_compile
-import atexit
-import webbrowser
 config_exist = os.path.isfile("isYrsInstalled")
 ##### imports end #####
 
