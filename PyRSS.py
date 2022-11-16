@@ -89,6 +89,7 @@ def Subscribe():
         print('Channel URL Set: '+textboxValue)
         URL = textboxValue
         os.system(f"yrs subscribe {URL}")
+        textbox.clear()
 
 
 #        # Create textbox
@@ -110,6 +111,7 @@ def UnSubscribe():
         URL = textboxValue
         os.system(f"yrs unsubscribe {URL}")
         print('UnSubbed!')
+        unsubBox.clear()
 
 
 #        # Create textbox
@@ -131,6 +133,7 @@ def DownloadVid():
         print('Video URL Set: '+textboxValue)
         URL = textboxValue
         os.system(f"yrs download {URL}")
+        downloadBox.clear()
 
 
 #        # Create textbox
@@ -151,6 +154,7 @@ def showChanVids():
         print('Channel Set: '+textboxValue)
         URL = textboxValue
         os.system(f"yrs list-videos {URL}")
+        chanVidBox.clear()
 
 
 #        # Create textbox
