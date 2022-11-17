@@ -1,9 +1,10 @@
+# initial imports #
 import sys
 import os
 import os.path
 from time import sleep
 config_exist = os.path.isfile("depend.config")
-
+# initial imports end #
 
 def StartUp():
 	os.system("cls")
@@ -137,9 +138,13 @@ unsubButton.setToolTip('Enter a YouTube Channel\'s URL to UnSub!')
 def DownloadVid():
         os.system("cls")
         textboxValue = downloadBox.text()
-        print('Video URL Set: '+textboxValue)
         URL = textboxValue
-        os.system(f"yrs download {URL}")
+        if 'https://www.youtube.com/watch?v=' in URL:
+                URL1 = URL.strip('https://www.youtube.com/watch?v=')
+        else:
+                URL1 = URL
+        print('Video URL Set: '+URL1)
+        os.system(f"youtube-dl {URL}")
         downloadBox.clear()
 
 
