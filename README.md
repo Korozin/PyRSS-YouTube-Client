@@ -3,6 +3,13 @@ an RSS Client in Python to download and view YouTube content using Yrs for the b
 
 Basically this uses a Python Package called YRS to fetch and use RSS Feed from YouTube - I just made a GUI to work with it.
 
+
+### Requirements
+
+`PyQt5`
+`Yrs` (Yrs is auto-installed upon running, but PyQt5 is not.)
+
+
 ### To Run
 
 It should be pretty self-explanatory to run open CMD / Terminal and type
