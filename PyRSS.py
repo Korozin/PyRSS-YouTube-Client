@@ -10,7 +10,7 @@ from time import sleep
 import sys
 import os
 import os.path
-config_exist = os.path.isfile("isYrsInstalled")
+config_exist = os.path.isfile("depend.config")
 ##### imports end #####
 
 
@@ -21,13 +21,18 @@ StartUp()
 
 
 if config_exist == False:
-	f = open("isYrsInstalled", "a")
-	f.write("True")
+	print('No Config File detected!\nInstalling dependencies. Please wait until it finishes')
+	f = open("depend.config", "a")
+	f.write("is YRS Installed? : True\nis PyQt5 installed? : True")
 	f.close()
 	os.system("pip install youtube-rss-subscriber")
+	sleep(2)
+	os.system("pip install PyQt5")
+	os.system("clear")
+	print('Finished installing dependencies')
 else:
-	f = open("isYrsInstalled", "r")
-	print('Is Yrs Installed? :', f.read())
+	f = open("depend.config", "r")
+	print(f.read())
 	f.close()
 
 
