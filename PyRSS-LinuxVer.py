@@ -1,9 +1,10 @@
+# initial imports #
 import sys
 import os
 import os.path
 from time import sleep
 config_exist = os.path.isfile("depend.config")
-
+# initial imports end #
 
 def StartUp():
 	os.system("clear")
