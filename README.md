@@ -7,7 +7,10 @@ Basically this uses a Python Package called YRS to fetch and use RSS Feed from Y
 ### Requirements
 
 `PyQt5`
-`Yrs` (Yrs is auto-installed upon running, but PyQt5 is not.)
+
+`Yrs` 
+
+(Yrs is auto-installed upon running, but PyQt5 is not.)
 
 
 ### To Run
