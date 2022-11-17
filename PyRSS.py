@@ -1,17 +1,8 @@
-##### imports #####
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import pyqtSlot
-from time import sleep
 import sys
 import os
 import os.path
+from time import sleep
 config_exist = os.path.isfile("depend.config")
-##### imports end #####
 
 
 def StartUp():
@@ -23,11 +14,13 @@ StartUp()
 if config_exist == False:
 	print('No Config File detected!\nInstalling dependencies. Please wait until it finishes')
 	f = open("depend.config", "a")
-	f.write("is YRS Installed? : True\nis PyQt5 installed? : True")
+	f.write("is YRS Installed? : True\nis PyQt5 installed? : True\nis Requests installed? : True")
 	f.close()
 	os.system("pip install youtube-rss-subscriber")
 	sleep(2)
 	os.system("pip install PyQt5")
+	sleep(2)
+	os.system("pip install requests")
 	os.system("clear")
 	print('Finished installing dependencies')
 else:
@@ -35,6 +28,15 @@ else:
 	print(f.read())
 	f.close()
 
+##### imports #####
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import pyqtSlot
+##### imports end #####
 
 application = QApplication([])
 mainWindow = QWidget()
