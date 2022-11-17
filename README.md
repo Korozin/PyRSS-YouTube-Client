@@ -20,13 +20,15 @@ It should be pretty self-explanatory to run open CMD / Terminal and type
 python PyRSS.py
 ```
 
-and it should check from a automatically generated config file whether or not YRS is installed. If not it'll go ahead and run
+and it should check from a automatically generated config file whether or not all dependencies are installed. If not it'll go ahead and run these commands
 
 ``` python
 pip install youtube-rss-subscriber
+pip install PyQt5
+pip install requests
 ```
 
-for you. Or you can just run it yourself. I really don't care.
+Or you can just run them yourself. I really don't care.
 
 The rest should be easy enough to figure out on your own.
 
