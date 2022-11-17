@@ -138,9 +138,13 @@ unsubButton.setToolTip('Enter a YouTube Channel\'s URL to UnSub!')
 def DownloadVid():
         os.system("clear")
         textboxValue = downloadBox.text()
-        print('Video URL Set: '+textboxValue)
         URL = textboxValue
-        os.system(f"yrs download {URL}")
+        if 'https://www.youtube.com/watch?v=' in URL:
+                URL1 = URL.strip('https://www.youtube.com/watch?v=')
+        else:
+                URL1 = URL
+        print('Video URL Set: '+URL1)
+        os.system(f"youtube-dl {URL}")
         downloadBox.clear()
 
 
