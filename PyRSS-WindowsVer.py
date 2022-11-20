@@ -3,14 +3,11 @@ import sys
 import os
 import os.path
 from time import sleep
+import json, requests
 config_exist = os.path.isfile("depend.config")
 # initial imports end #
 
-def StartUp():
-	os.system("cls")
-
-StartUp()
-
+os.system("cls")
 
 if config_exist == False:
 	print('No Config File detected!\nInstalling dependencies. Please wait until it finishes')
@@ -39,149 +36,326 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 ##### imports end #####
 
-application = QApplication([])
+
+#### Layout & Geometry ####
+
+mainApp = QApplication([])
 mainWindow = QWidget()
-layout = QGridLayout()
+mainWindow.setGeometry(0, 0, 1110, 440)
+mainWindow.setWindowTitle('PyRSS : KorOwOzin')
+layout = QGridLayout(mainWindow)
 mainWindow.setLayout(layout)
 
-label1 = QLabel('')
+#### Layout & Geometry End ####
 
-tabwidget = QTabWidget()
-tabwidget.addTab(label1, "Main")
-layout.addWidget(tabwidget, 0, 0)
 
-mainWindow.setGeometry(0, 0, 310, 250)
-mainWindow.setWindowTitle('PyRSS Client by : KorOwOzin')
+#### Console GUI ####
 
-def updateRSS():
-    os.system("cls")
-    print('Updating RSS Feed..')
-    sleep(0.5)    
-    os.system("yrs update")
-    print('Done')
+consoleLog = QTextEdit(mainWindow)
+consoleLog.move(5, 130)
+consoleLog.resize(1100,300)
+consoleLog.setFontPointSize(10)
+consoleLog.setReadOnly(True)
 
-mainWindow.bb = QPushButton('Update RSS Feed', parent=label1)
-mainWindow.bb.setToolTip('This is button will update the RSS Feed of your Subscribed Channels!')
-mainWindow.bb.move(20,120)
-mainWindow.bb.clicked.connect(updateRSS)
+consoleLabel = QLabel('Console GUI', parent=mainWindow)
+consoleLabel.move(5, 100)
 
-def showVideos():
-    os.system("cls")
-    os.system("yrs list-all-videos")
+#### Console GUI End ####
 
-dispVid = QPushButton('Display ALL Vids', parent=label1)
-dispVid.setToolTip('This is button will show the avaliable videos from ALL of your Subbed Channels!')
-dispVid.move(20,160)
-dispVid.clicked.connect(showVideos)
 
-def showChannels():
-    os.system("cls")
-    os.system("yrs list-channels")
-
-dispCha = QPushButton('List Channels', parent=label1)
-dispCha.setToolTip('This is button will show the Channels you\'re subbed to.')
-dispCha.move(160,120)
-dispCha.clicked.connect(showChannels)
-
-def ClearTerm():
-    os.system("cls")
-
-clearTerm = QPushButton('Clear Terminal', parent=label1)
-clearTerm.setToolTip('Clears the Terminal')
-clearTerm.move(160,160)
-clearTerm.clicked.connect(ClearTerm)
+#### Subscribe Function ####
 
 def Subscribe():
-        os.system("cls")
-        textboxValue = textbox.text()
-        print('Channel URL Set: '+textboxValue)
-        URL = textboxValue
-        os.system(f"yrs subscribe {URL}")
-        textbox.clear()
+	os.system("cls")
+	consoleLog.clear()
+	subText = subBox.text()
+	op1 = (f'Channel URL Set: {subText}\n')
+	op2 = os.popen(f'yrs subscribe {subText}').read()
+	op3 = '\n'
+	op4 = op1 + op2 + op3
+	consoleLog.setFontPointSize(10)
+	consoleLog.setText(op4)
+	subBox.clear()
+
+# Subscribe Label #
+subLabel = QLabel('Subscribe', parent=mainWindow)
+subLabel.move(5, 0)
+
+# Subscribe Textbox #
+subBox = QLineEdit(mainWindow)
+subBox.move(5, 25)
+subBox.resize(180,20)
+subBox.returnPressed.connect(Subscribe)
+subBox.setToolTip('Enter a YouTube Channel\'s URL to Subscribe!')
+
+#### Subscribe Function End ####
 
 
-#        # Create textbox
-textbox = QLineEdit(parent=label1)
-textbox.move(0, 0)
-textbox.resize(180,20)
 
-button = QPushButton('Subscribe', parent=label1)
-button.move(181,0)
-button.resize(100,20)
-button.clicked.connect(Subscribe)
-button.setToolTip('Enter a YouTube Channel\'s URL to Subscribe!')
-
+#### UnSubscribe Function ####
 
 def UnSubscribe():
-        os.system("cls")
-        textboxValue = unsubBox.text()
-        print('Channel URL Set: '+textboxValue)
-        URL = textboxValue
-        os.system(f"yrs unsubscribe {URL}")
-        print('UnSubbed!')
-        unsubBox.clear()
+	os.system("cls")
+	consoleLog.clear()
+	unsubText = unsubBox.text()
+	op1 = (f'Channel URL Set: {unsubText}\n')
+	op2 = os.popen(f'yrs unsubscribe {unsubText}').read()
+	op3 = 'UnSubbed from: {unsubText}\n'
+	op4 = op1 + op2 + op3
+	consoleLog.setFontPointSize(10)
+	consoleLog.setText(op4)
+	unsubBox.clear()
 
+# UnSubscribe Label #
+unsubLabel = QLabel('UnSubscribe', parent=mainWindow)
+unsubLabel.move(190, 0)
 
-#        # Create textbox
-unsubBox = QLineEdit(parent=label1)
-unsubBox.move(0, 25)
+# UnSubscribe Textbox #
+unsubBox = QLineEdit(mainWindow)
+unsubBox.move(190, 25)
 unsubBox.resize(180,20)
+unsubBox.returnPressed.connect(UnSubscribe)
+unsubBox.setToolTip('UnSubscribe from a YouTube Channel\'s Feed')
 
-unsubButton = QPushButton('UnSubscribe', parent=label1)
-unsubButton.move(181,25)
-unsubButton.resize(100,20)
-unsubButton.clicked.connect(UnSubscribe)
-unsubButton.setToolTip('Enter a YouTube Channel\'s URL to UnSub!')
+#### UnSubscribe Function End ####
 
 
 
-def DownloadVid():
-        os.system("cls")
-        textboxValue = downloadBox.text()
-        URL = textboxValue
-        if 'https://www.youtube.com/watch?v=' in URL:
-                URL1 = URL.strip('https://www.youtube.com/watch?v=')
-        else:
-                URL1 = URL
-        print('Video URL Set: '+URL1)
-        os.system(f"youtube-dl {URL}")
-        downloadBox.clear()
-
-
-#        # Create textbox
-downloadBox = QLineEdit(parent=label1)
-downloadBox.move(0, 50)
-downloadBox.resize(180,20)
-
-downloadButton = QPushButton('Download Vid', parent=label1)
-downloadButton.move(181,50)
-downloadButton.resize(100,20)
-downloadButton.clicked.connect(DownloadVid)
-downloadButton.setToolTip('Enter a YouTube Video\'s URL to Download!')
-
+#### Show Specific Channels Function ####
 
 def showChanVids():
-        os.system("cls")
-        textboxValue = chanVidBox.text()
-        print('Channel Set: '+textboxValue)
-        URL = textboxValue
-        os.system(f"yrs list-videos {URL}")
-        chanVidBox.clear()
+	os.system("cls")
+	consoleLog.clear()
+	chanVidText = chanVidBox.text()
+	op1 = (f'Channel URL Set: {chanVidText}\n')
+	op2 = os.popen(f'yrs list-videos {chanVidText}').read()
+	op3 = '\n'
+	op4 = op1 + op2 + op3
+	consoleLog.setFontPointSize(10)
+	consoleLog.setText(op4)
+	chanVidBox.clear()
 
+# Channel Vid Label #
+chanVidLabel = QLabel('Show Channel\'s Videos', parent=mainWindow)
+chanVidLabel.move(5, 50)
+chanVidLabel.resize(180, 20)
 
-#        # Create textbox
-chanVidBox = QLineEdit(parent=label1)
-chanVidBox.move(0, 75)
+# Channel Vid Textbox #
+chanVidBox = QLineEdit(mainWindow)
+chanVidBox.move(5, 70)
 chanVidBox.resize(180,20)
+chanVidBox.returnPressed.connect(showChanVids)
+chanVidBox.setToolTip('Show a specifc Channel\'s Videos')
 
-chanVidButton = QPushButton('Channel Vids', parent=label1)
-chanVidButton.move(181,75)
-chanVidButton.resize(100,20)
-chanVidButton.clicked.connect(showChanVids)
-chanVidButton.setToolTip('Shows a specific Channel\'s Videos')
+#### Show Specific Channels Function End ####
+
+
+
+#### Download Video Function ####
+
+def downloadVid():
+	os.system("cls")
+	consoleLog.clear()
+	downloadText = downloadVidBox.text()
+	op0 = ('Real-Time Download Progress not shown in this Beta!\n')
+	op1 = (f'Video Set: {downloadText}\n')
+	op2 = os.popen(f'youtube-dl {downloadText}').read()
+	op3 = '\n'
+	op4 = op0 + op1 + op2 + op3
+	consoleLog.setFontPointSize(10)
+	consoleLog.setText(op4)
+	downloadVidBox.clear()
+
+# Channel Vid Label #
+downloadVidLabel = QLabel('Download Video', parent=mainWindow)
+downloadVidLabel.move(190, 50)
+downloadVidLabel.resize(180, 20)
+
+# Channel Vid Textbox #
+downloadVidBox = QLineEdit(mainWindow)
+downloadVidBox.move(190, 70)
+downloadVidBox.resize(180,20)
+downloadVidBox.returnPressed.connect(downloadVid)
+downloadVidBox.setToolTip('Download a YouTube Video')
+
+#### Show Specific Channels Function End ####
+
+
+
+#### Show Vid Info Function ####
+
+def showVidInfo():
+	os.system("cls")
+	consoleLog.clear()
+	vid = VidInfoBox.text()
+
+	url = requests.get(f'https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id={vid}&key=AIzaSyA1_WyNYJOumLMknZE0OwW0IRehkJECgkk')
+	text = url.text
+
+	url2 = requests.get(f'https://returnyoutubedislikeapi.com/votes?videoId={vid}')
+	text2 = url2.text
+	
+	data = json.loads(text)
+	data2 = json.loads(text2)
+	
+	if data['pageInfo']['totalResults'] == 0:
+		e1 = (f'Video ID "{vid}" not found!')
+		consoleLog.setFontPointSize(10)
+		consoleLog.setText(e1)
+	elif "kind" in data['items'][0]:
+		p1 = (f'Video URL: youtube.com/watch?v={vid}\n')
+		p2 = ('Title :', str(data['items'][0]['snippet']['title']))
+		p3 = ('Author :', str(data['items'][0]['snippet']['channelTitle']))   
+		p4 = ('Channel ID :', str(data['items'][0]['snippet']['channelId']))
+		p5 = ('Uploaded At :', str(data['items'][0]['snippet']['publishedAt']))
+		p6 = ('HD or SD? :', str(data['items'][0]['contentDetails']['definition']))
+		p7 = ('Views :', str(data['items'][0]['statistics']['viewCount']))
+		p8 = ('Likes :', str(data['items'][0]['statistics']['likeCount']))
+		p9 = ('Dislikes :', str(data2['dislikes']))
+		p10 = ('Comments :', str(data['items'][0]['statistics']['commentCount']))
+		## No way to do this in a loop. Ugh ##
+		consoleLog.setFontPointSize(10)
+		consoleLog.setText(str(p1))
+		consoleLog.append(str(p2))
+		consoleLog.append(str(p3))
+		consoleLog.append(str(p4))
+		consoleLog.append(str(p5))
+		consoleLog.append(str(p6))
+		consoleLog.append(str(p7))
+		consoleLog.append(str(p8))
+		consoleLog.append(str(p9))
+		consoleLog.append(str(p10))
+
+# Vid Info Label #
+VidInfoLabel = QLabel('Show Video\'s Info', parent=mainWindow)
+VidInfoLabel.move(375, 5)
+VidInfoLabel.resize(180, 20)
+
+# Vid Info Textbox #
+VidInfoBox = QLineEdit(mainWindow)
+VidInfoBox.move(375, 25)
+VidInfoBox.resize(180,20)
+VidInfoBox.returnPressed.connect(showVidInfo)
+VidInfoBox.setToolTip('Show a specifc Videos\'s Information')
+
+#### Show Vid Info Function End ####
+
+
+
+#### VLC Stream Function ####
+
+def vlcStream():
+	os.system("cls")
+	consoleLog.clear()
+	vlcText = vlcBox.text()
+	op0 = ('This feature might not work! Google constantly breaks VLC!\nHowever this should work 100% with any other Media URL\n')
+	op1 = (f'Video Set: {vlcText}\n')
+	op2 = os.popen(f'vlc {vlcText}').read()
+	op3 = '\n'
+	op4 = op0 + op1 + op2 + op3
+	consoleLog.setFontPointSize(10)
+	consoleLog.setText(op4)
+	vlcBox.clear()
+
+# VLC Stream Label #
+vlcLabel = QLabel('Stream to VLC', parent=mainWindow)
+vlcLabel.move(375, 50)
+vlcLabel.resize(180, 20)
+
+# VLC Stream Textbox #
+vlcBox = QLineEdit(mainWindow)
+vlcBox.move(375, 70)
+vlcBox.resize(180,20)
+vlcBox.returnPressed.connect(vlcStream)
+vlcBox.setToolTip('Stream Media to VLC Player ( Please use FULL URL [ EX: https://example.com/video.mp4 ] )')
+
+#### VLC Stream Function End ####
+
+
+
+#### Update RSS Function ####
+
+def updateRSS():
+	os.system("cls")
+	consoleLog.clear()
+	op0 = (f'Updating RSS...\n')
+	op1 = os.popen(f'yrs update').read()
+	op2 = 'done\n'
+	op3 = op0 + op1 + op2
+	consoleLog.setFontPointSize(10)
+	consoleLog.setText(op3)
+
+# Update RSS Button #
+showAllVids = QPushButton('Update RSS Feed', parent=mainWindow)
+showAllVids.setToolTip('Update RSS Feed of Subbed Channels')
+showAllVids.move(700,15)
+showAllVids.resize(150,30)
+showAllVids.clicked.connect(updateRSS)
+
+#### Update RSS Function End ####
+
+
+
+#### Show Channels Function ####
+
+def showAllChannels():
+	os.system("cls")
+	consoleLog.clear()
+	op1 = os.popen(f'yrs list-channels').read()
+	consoleLog.setFontPointSize(10)
+	consoleLog.setText(op1)
+
+# Show Channels Button #
+allChannelsButton = QPushButton('List Channels', parent=mainWindow)
+allChannelsButton.setToolTip('Lists all Subbed Channels')
+allChannelsButton.move(860,15)
+allChannelsButton.resize(150,30)
+allChannelsButton.clicked.connect(showAllChannels)
+
+#### Show Channels Function End ####
+
+
+
+#### Show ALL Vids Function ####
+
+def showAllVids():
+	os.system("cls")
+	consoleLog.clear()
+	op1 = os.popen(f'yrs list-all-videos').read()
+	consoleLog.setFontPointSize(10)
+	consoleLog.setText(op1)
+
+# Show ALL Vids Button #
+showAllVidsButton = QPushButton('List ALL Vids', parent=mainWindow)
+showAllVidsButton.setToolTip('Lists ALL Video\'s from subbed channels')
+showAllVidsButton.move(700,50)
+showAllVidsButton.resize(150,30)
+showAllVidsButton.clicked.connect(showAllVids)
+
+#### Show ALL Vids Function End ####
+
+
+
+#### Clear GUI Log Function ####
+
+def clearLog():
+	os.system("cls")
+	consoleLog.clear()
+	consoleLog.setFontPointSize(10)
+	consoleLog.setText('Cleared')
+
+# Clear GUI Log Button #
+clearLogButton = QPushButton('Clear Log', parent=mainWindow)
+clearLogButton.setToolTip('Clears the GUI Log')
+clearLogButton.move(860,50)
+clearLogButton.resize(150,30)
+clearLogButton.clicked.connect(clearLog)
+
+#### Clear GUI Log Function End ####
+
 
 
 ##### ending agreement #####
 mainWindow.show()
-application.exec()
+mainApp.exec()
 ##### ending agreement end #####
