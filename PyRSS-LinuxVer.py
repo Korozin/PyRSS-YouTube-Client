@@ -17,42 +17,59 @@ except ImportError as error:
 	if choice == 'Y':
 		os.system('pip install pylibcheck')
 		import pylibcheck
+		os.system('clear')
+		print('pylibcheck is now installed')
 	elif choice == 'N':
 		print('Suit yourself then.')
+		sys.exit()
 
 ## use pylibcheck for installing yrs
 if not pylibcheck.checkPackage("youtube-rss-subscriber"):
+	os.system("clear")
 	print('yrs doesn\'t exist. Want me to install it for you?')
 	x = input('(y/n) : ')
 	choice = x.upper()
 	if choice == 'Y':
 		os.system('pip install youtube-rss-subscriber')
+		os.system("clear")
+		print('yrs is now installed')
 	elif choice == 'N':
 		print('Suit yourself then.')
+		sys.exit()
 else:
-	print("Yrs is installed? : True")
+	print("yrs is installed? : True")
 
 ## use pylibcheck for installing requests
 if not pylibcheck.checkPackage("requests"):
+	os.system("clear")
 	print('requests doesn\'t exist. Want me to install it for you?')
 	x = input('(y/n) : ')
 	choice = x.upper()
 	if choice == 'Y':
 		os.system('pip install requests')
+		import requests
+		os.system("clear")
+		print('requests imported')
 	elif choice == 'N':
 		print('Suit yourself then.')
+		sys.exit()
 else:
 	print("requests is installed? : True")
 
 ## use pylibcheck for installing PyQt5
 if not pylibcheck.checkPackage("pyqt5"): # PyQt5 NEEDS to be lowercase on this line
+	os.system("clear")
 	print('PyQt5 doesn\'t exist. Want me to install it for you?')
 	x = input('(y/n) : ')
 	choice = x.upper()
 	if choice == 'Y':
 		os.system('pip install PyQt5')
+		from PyQt5 import *
+		os.system("clear")
+		print('PyQt5 imported')
 	elif choice == 'N':
 		print('Suit yourself then.')
+		sys.exit()
 else:
 	print("PyQt5 is installed? : True")
 
