@@ -17,10 +17,13 @@ except ImportError as error:
 	if choice == 'Y':
 		os.system('pip install pylibcheck')
 		import pylibcheck
-		os.system('clear')
+		os.system("clear")
 		print('pylibcheck is now installed')
 	elif choice == 'N':
 		print('Suit yourself then.')
+		sys.exit()
+	else:
+		print('invalid choice')
 		sys.exit()
 
 ## use pylibcheck for installing yrs
@@ -35,6 +38,9 @@ if not pylibcheck.checkPackage("youtube-rss-subscriber"):
 		print('yrs is now installed')
 	elif choice == 'N':
 		print('Suit yourself then.')
+		sys.exit()
+	else:
+		print('invalid choice')
 		sys.exit()
 else:
 	print("yrs is installed? : True")
@@ -53,6 +59,9 @@ if not pylibcheck.checkPackage("requests"):
 	elif choice == 'N':
 		print('Suit yourself then.')
 		sys.exit()
+	else:
+		print('invalid choice')
+		sys.exit()
 else:
 	print("requests is installed? : True")
 
@@ -69,6 +78,9 @@ if not pylibcheck.checkPackage("pyqt5"): # PyQt5 NEEDS to be lowercase on this l
 		print('PyQt5 imported')
 	elif choice == 'N':
 		print('Suit yourself then.')
+		sys.exit()
+	else:
+		print('invalid choice')
 		sys.exit()
 else:
 	print("PyQt5 is installed? : True")
