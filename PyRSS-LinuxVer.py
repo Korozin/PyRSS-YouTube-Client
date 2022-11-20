@@ -16,6 +16,7 @@ except ImportError as error:
 	choice = x.upper()
 	if choice == 'Y':
 		os.system('pip install pylibcheck')
+		import pylibcheck
 	elif choice == 'N':
 		print('Suit yourself then.')
 
