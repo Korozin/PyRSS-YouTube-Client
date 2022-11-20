@@ -1,30 +1,60 @@
 # initial imports #
 import sys
 import os
-import os.path
 from time import sleep
-import json, requests
-config_exist = os.path.isfile("depend.config")
+import json
 # initial imports end #
 
 os.system("cls")
 
-if config_exist == False:
-	print('No Config File detected!\nInstalling dependencies. Please wait until it finishes')
-	f = open("depend.config", "a")
-	f.write("is YRS Installed? : True\nis PyQt5 installed? : True\nis Requests installed? : True")
-	f.close()
-	os.system("pip install youtube-rss-subscriber")
-	sleep(2)
-	os.system("pip install PyQt5")
-	sleep(2)
-	os.system("pip install requests")
-	os.system("cls")
-	print('Finished installing dependencies')
+## Base Check for pylibcheck
+try:
+	import pylibcheck
+except ImportError as error:
+	print(error, 'Want me to install it for you?')
+	x = input('(y/n) : ')
+	choice = x.upper()
+	if choice == 'Y':
+		os.system('pip install pylibcheck')
+	elif choice == 'N':
+		print('Suit yourself then.')
+
+## use pylibcheck for installing yrs
+if not pylibcheck.checkPackage("youtube-rss-subscriber"):
+	print('yrs doesn\'t exist. Want me to install it for you?')
+	x = input('(y/n) : ')
+	choice = x.upper()
+	if choice == 'Y':
+		os.system('pip install youtube-rss-subscriber')
+	elif choice == 'N':
+		print('Suit yourself then.')
 else:
-	f = open("depend.config", "r")
-	print(f.read())
-	f.close()
+	print("Yrs is installed? : True")
+
+## use pylibcheck for installing requests
+if not pylibcheck.checkPackage("requests"):
+	print('requests doesn\'t exist. Want me to install it for you?')
+	x = input('(y/n) : ')
+	choice = x.upper()
+	if choice == 'Y':
+		os.system('pip install requests')
+	elif choice == 'N':
+		print('Suit yourself then.')
+else:
+	print("requests is installed? : True")
+
+## use pylibcheck for installing PyQt5
+if not pylibcheck.checkPackage("pyqt5"): # PyQt5 NEEDS to be lowercase on this line
+	print('PyQt5 doesn\'t exist. Want me to install it for you?')
+	x = input('(y/n) : ')
+	choice = x.upper()
+	if choice == 'Y':
+		os.system('pip install PyQt5')
+	elif choice == 'N':
+		print('Suit yourself then.')
+else:
+	print("PyQt5 is installed? : True")
+
 
 ##### imports #####
 from PyQt5 import QtCore, QtWidgets
@@ -34,6 +64,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QPixmap
+import requests
 ##### imports end #####
 
 
@@ -51,6 +83,7 @@ mainWindow.setLayout(layout)
 
 #### Console GUI ####
 
+global consoleLog
 consoleLog = QTextEdit(mainWindow)
 consoleLog.move(5, 130)
 consoleLog.resize(1100,300)
@@ -66,16 +99,36 @@ consoleLabel.move(5, 100)
 #### Subscribe Function ####
 
 def Subscribe():
+
+	def dataReady():
+		cursor = consoleLog.textCursor()
+		cursor.movePosition(cursor.End)
+		cursor.insertText(process.readAll().data().decode())
+		output.ensureCursorVisible()
+		subBox.clear()
+
+	def callProgram():
+		output.clear()
+		subText = subBox.text()
+		consoleLog.setText(f'URL Set: {subText}\n\n')
+		process.start(f'yrs subscribe {subText}')
+
+	def SubscribeStart():
+		global output
+		output =  consoleLog
+
+		global process
+		process = QtCore.QProcess()
+		process.readyRead.connect(dataReady)
+
+		process.started.connect(lambda: subBox.setEnabled(False))
+		process.finished.connect(lambda: subBox.setEnabled(True))
+
+
 	os.system("cls")
 	consoleLog.clear()
-	subText = subBox.text()
-	op1 = (f'Channel URL Set: {subText}\n')
-	op2 = os.popen(f'yrs subscribe {subText}').read()
-	op3 = '\n'
-	op4 = op1 + op2 + op3
-	consoleLog.setFontPointSize(10)
-	consoleLog.setText(op4)
-	subBox.clear()
+	SubscribeStart()
+	callProgram()
 
 # Subscribe Label #
 subLabel = QLabel('Subscribe', parent=mainWindow)
@@ -95,16 +148,35 @@ subBox.setToolTip('Enter a YouTube Channel\'s URL to Subscribe!')
 #### UnSubscribe Function ####
 
 def UnSubscribe():
+
+	def dataReady():
+		cursor = consoleLog.textCursor()
+		cursor.movePosition(cursor.End)
+		cursor.insertText(process.readAll().data().decode())
+		output.ensureCursorVisible()
+		unsubBox.clear()
+
+	def callProgram():
+		output.clear()
+		unsubText = unsubBox.text()
+		consoleLog.setText(f'Channel URL Set: {unsubText}\n\n')
+		process.start(f'yrs unsubscribe {unsubText}')
+
+	def UnSubscribeStart():
+		global output
+		output =  consoleLog
+
+		global process
+		process = QtCore.QProcess()
+		process.readyRead.connect(dataReady)
+
+		process.started.connect(lambda: unsubBox.setEnabled(False))
+		process.finished.connect(lambda: unsubBox.setEnabled(True))
+
 	os.system("cls")
 	consoleLog.clear()
-	unsubText = unsubBox.text()
-	op1 = (f'Channel URL Set: {unsubText}\n')
-	op2 = os.popen(f'yrs unsubscribe {unsubText}').read()
-	op3 = 'UnSubbed from: {unsubText}\n'
-	op4 = op1 + op2 + op3
-	consoleLog.setFontPointSize(10)
-	consoleLog.setText(op4)
-	unsubBox.clear()
+	UnSubscribeStart()
+	callProgram()
 
 # UnSubscribe Label #
 unsubLabel = QLabel('UnSubscribe', parent=mainWindow)
@@ -124,16 +196,36 @@ unsubBox.setToolTip('UnSubscribe from a YouTube Channel\'s Feed')
 #### Show Specific Channels Function ####
 
 def showChanVids():
+
+	def dataReady():
+		cursor = consoleLog.textCursor()
+		cursor.movePosition(cursor.End)
+		cursor.insertText(process.readAll().data().decode())
+		output.ensureCursorVisible()
+		chanVidBox.clear()
+
+	def callProgram():
+		output.clear()
+		chanVidText = chanVidBox.text()
+		consoleLog.setText(f'Channel Set: {chanVidText}\n\n')
+		process.start(f'yrs list-videos {chanVidText}')
+
+	def showChanVidsStart():
+		global output
+		output =  consoleLog
+
+		global process
+		process = QtCore.QProcess()
+		process.readyRead.connect(dataReady)
+
+		process.started.connect(lambda: chanVidBox.setEnabled(False))
+		process.finished.connect(lambda: chanVidBox.setEnabled(True))
+
+
 	os.system("cls")
 	consoleLog.clear()
-	chanVidText = chanVidBox.text()
-	op1 = (f'Channel URL Set: {chanVidText}\n')
-	op2 = os.popen(f'yrs list-videos {chanVidText}').read()
-	op3 = '\n'
-	op4 = op1 + op2 + op3
-	consoleLog.setFontPointSize(10)
-	consoleLog.setText(op4)
-	chanVidBox.clear()
+	showChanVidsStart()
+	callProgram()
 
 # Channel Vid Label #
 chanVidLabel = QLabel('Show Channel\'s Videos', parent=mainWindow)
@@ -154,17 +246,36 @@ chanVidBox.setToolTip('Show a specifc Channel\'s Videos')
 #### Download Video Function ####
 
 def downloadVid():
+
+	def dataReady():
+		cursor = consoleLog.textCursor()
+		cursor.movePosition(cursor.End)
+		cursor.insertText(process.readAll().data().decode())
+		output.ensureCursorVisible()
+		downloadVidBox.clear()
+
+	def callProgram():
+		output.clear()
+		downloadText = downloadVidBox.text()
+		consoleLog.setText(f'Video Set: {downloadText}\n\n')
+		process.start(f'youtube-dl {downloadText}')
+
+	def startDownload():
+		global output
+		output =  consoleLog
+
+		global process
+		process = QtCore.QProcess()
+		process.readyRead.connect(dataReady)
+
+		process.started.connect(lambda: downloadVidBox.setEnabled(False))
+		process.finished.connect(lambda: downloadVidBox.setEnabled(True))
+
+
 	os.system("cls")
 	consoleLog.clear()
-	downloadText = downloadVidBox.text()
-	op0 = ('Real-Time Download Progress not shown in this Beta!\n')
-	op1 = (f'Video Set: {downloadText}\n')
-	op2 = os.popen(f'youtube-dl {downloadText}').read()
-	op3 = '\n'
-	op4 = op0 + op1 + op2 + op3
-	consoleLog.setFontPointSize(10)
-	consoleLog.setText(op4)
-	downloadVidBox.clear()
+	startDownload()
+	callProgram()
 
 # Channel Vid Label #
 downloadVidLabel = QLabel('Download Video', parent=mainWindow)
@@ -202,6 +313,7 @@ def showVidInfo():
 		e1 = (f'Video ID "{vid}" not found!')
 		consoleLog.setFontPointSize(10)
 		consoleLog.setText(e1)
+		VidInfoBox.clear()
 	elif "kind" in data['items'][0]:
 		p1 = (f'Video URL: youtube.com/watch?v={vid}\n')
 		p2 = ('Title :', str(data['items'][0]['snippet']['title']))
@@ -225,6 +337,7 @@ def showVidInfo():
 		consoleLog.append(str(p8))
 		consoleLog.append(str(p9))
 		consoleLog.append(str(p10))
+		VidInfoBox.clear()
 
 # Vid Info Label #
 VidInfoLabel = QLabel('Show Video\'s Info', parent=mainWindow)
@@ -245,17 +358,36 @@ VidInfoBox.setToolTip('Show a specifc Videos\'s Information')
 #### VLC Stream Function ####
 
 def vlcStream():
+
+	def dataReady():
+		cursor = consoleLog.textCursor()
+		cursor.movePosition(cursor.End)
+		cursor.insertText(process.readAll().data().decode())
+		output.ensureCursorVisible()
+		vlcBox.clear()
+
+	def callProgram():
+		output.clear()
+		vlcText = vlcBox.text()
+		consoleLog.setText(f'This feature might not work! Google constantly breaks VLC!\nHowever this should work 100% with any other Media URL\n\nURL Set: {vlcText}\n\n')
+		process.start(f'vlc {vlcText}')
+
+	def vlcStreamStart():
+		global output
+		output =  consoleLog
+
+		global process
+		process = QtCore.QProcess()
+		process.readyRead.connect(dataReady)
+
+		process.started.connect(lambda: vlcBox.setEnabled(False))
+		process.finished.connect(lambda: vlcBox.setEnabled(True))
+
+
 	os.system("cls")
 	consoleLog.clear()
-	vlcText = vlcBox.text()
-	op0 = ('This feature might not work! Google constantly breaks VLC!\nHowever this should work 100% with any other Media URL\n')
-	op1 = (f'Video Set: {vlcText}\n')
-	op2 = os.popen(f'vlc {vlcText}').read()
-	op3 = '\n'
-	op4 = op0 + op1 + op2 + op3
-	consoleLog.setFontPointSize(10)
-	consoleLog.setText(op4)
-	vlcBox.clear()
+	vlcStreamStart()
+	callProgram()
 
 # VLC Stream Label #
 vlcLabel = QLabel('Stream to VLC', parent=mainWindow)
@@ -276,21 +408,42 @@ vlcBox.setToolTip('Stream Media to VLC Player ( Please use FULL URL [ EX: https:
 #### Update RSS Function ####
 
 def updateRSS():
+
+	def dataReady():
+		cursor = consoleLog.textCursor()
+		cursor.movePosition(cursor.End)
+		cursor.insertText(process.readAll().data().decode())
+		output.ensureCursorVisible()
+		consoleLog.setText(f'Done')
+
+	def callProgram():
+		output.clear()
+		consoleLog.setText(f'Updated RSS\n\n')
+		process.start(f'yrs update')
+
+	def updateRssStart():
+		global output
+		output =  consoleLog
+
+		global process
+		process = QtCore.QProcess()
+		process.readyRead.connect(dataReady)
+
+		process.started.connect(lambda: rssButton.setEnabled(False))
+		process.finished.connect(lambda: rssButton.setEnabled(True))
+
+
 	os.system("cls")
 	consoleLog.clear()
-	op0 = (f'Updating RSS...\n')
-	op1 = os.popen(f'yrs update').read()
-	op2 = 'done\n'
-	op3 = op0 + op1 + op2
-	consoleLog.setFontPointSize(10)
-	consoleLog.setText(op3)
+	updateRssStart()
+	callProgram()
 
 # Update RSS Button #
-showAllVids = QPushButton('Update RSS Feed', parent=mainWindow)
-showAllVids.setToolTip('Update RSS Feed of Subbed Channels')
-showAllVids.move(700,15)
-showAllVids.resize(150,30)
-showAllVids.clicked.connect(updateRSS)
+rssButton = QPushButton('Update RSS Feed', parent=mainWindow)
+rssButton.setToolTip('Update RSS Feed of Subbed Channels')
+rssButton.move(700,15)
+rssButton.resize(150,30)
+rssButton.clicked.connect(updateRSS)
 
 #### Update RSS Function End ####
 
@@ -299,11 +452,33 @@ showAllVids.clicked.connect(updateRSS)
 #### Show Channels Function ####
 
 def showAllChannels():
+
+	def dataReady():
+		cursor = consoleLog.textCursor()
+		cursor.movePosition(cursor.End)
+		cursor.insertText(process.readAll().data().decode())
+		output.ensureCursorVisible()
+
+	def callProgram():
+		output.clear()
+		process.start(f'yrs list-channels')
+
+	def startShowAllChannels():
+		global output
+		output =  consoleLog
+
+		global process
+		process = QtCore.QProcess()
+		process.readyRead.connect(dataReady)
+
+		process.started.connect(lambda: allChannelsButton.setEnabled(False))
+		process.finished.connect(lambda: allChannelsButton.setEnabled(True))
+
+
 	os.system("cls")
 	consoleLog.clear()
-	op1 = os.popen(f'yrs list-channels').read()
-	consoleLog.setFontPointSize(10)
-	consoleLog.setText(op1)
+	startShowAllChannels()
+	callProgram()
 
 # Show Channels Button #
 allChannelsButton = QPushButton('List Channels', parent=mainWindow)
@@ -319,11 +494,39 @@ allChannelsButton.clicked.connect(showAllChannels)
 #### Show ALL Vids Function ####
 
 def showAllVids():
+
+	def dataReady():
+		cursor = consoleLog.textCursor()
+		cursor.movePosition(cursor.End)
+		cursor.insertText(process.readAll().data().decode())
+		output.ensureCursorVisible()
+
+	def callProgram():
+		output.clear()
+		process.start(f'yrs list-all-videos')
+
+	def startShowAllVids():
+		global output
+		output =  consoleLog
+
+		global process
+		process = QtCore.QProcess()
+		process.readyRead.connect(dataReady)
+
+		process.started.connect(lambda: showAllVidsButton.setEnabled(False))
+		process.finished.connect(lambda: showAllVidsButton.setEnabled(True))
+
+
 	os.system("cls")
 	consoleLog.clear()
-	op1 = os.popen(f'yrs list-all-videos').read()
-	consoleLog.setFontPointSize(10)
-	consoleLog.setText(op1)
+	startShowAllVids()
+	callProgram()
+
+#	os.system("cls")
+#	consoleLog.clear()
+#	op1 = os.popen(f'yrs list-all-videos').read()
+#	consoleLog.setFontPointSize(10)
+#	consoleLog.setText(op1)
 
 # Show ALL Vids Button #
 showAllVidsButton = QPushButton('List ALL Vids', parent=mainWindow)
