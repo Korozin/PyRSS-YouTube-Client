@@ -102,11 +102,71 @@ import requests
 #### Layout & Geometry ####
 
 mainApp = QApplication([])
+
 mainWindow = QWidget()
-mainWindow.setGeometry(0, 0, 1110, 440)
+mainWindow.setGeometry(0, 0, 1140, 555)
 mainWindow.setWindowTitle('PyRSS : KorOwOzin')
+
 layout = QGridLayout(mainWindow)
+
 mainWindow.setLayout(layout)
+
+label1 = QLabel('')
+label2 = QLabel('')
+labelA1 = QLabel('')
+labelA2 = QLabel('')
+labelA3 = QLabel('')
+labelA4 = QLabel('')
+
+layout1 = QtWidgets.QVBoxLayout(label1)
+layout2 = QtWidgets.QVBoxLayout(label2)
+
+layout3 = QtWidgets.QVBoxLayout(labelA1)
+layout4 = QtWidgets.QVBoxLayout(labelA2)
+layout5 = QtWidgets.QVBoxLayout(labelA3)
+layout6 = QtWidgets.QVBoxLayout(labelA4)
+
+tabwidget = QTabWidget(mainWindow)
+tabwidget.addTab(label1, "Main")
+tabwidget.addTab(label2, "Advanced Vid Info")
+
+layout.addWidget(tabwidget)
+
+infotab = QTabWidget(mainWindow)
+infotab.addTab(labelA1, "Overview")
+layout2.addWidget(infotab)
+
+infotab.addTab(labelA2, "Thumbnail(s)")
+layout2.addWidget(infotab)
+
+infotab.addTab(labelA3, "Description")
+layout2.addWidget(infotab)
+
+infotab.addTab(labelA4, "Comments")
+layout2.addWidget(infotab)
+
+te1 = QTextEdit(mainWindow)
+layout3.addWidget(te1)
+
+te2 = QTextEdit(mainWindow)
+layout4.addWidget(te2)
+
+te3 = QTextEdit(mainWindow)
+layout5.addWidget(te3)
+
+te4 = QTextEdit(mainWindow)
+layout6.addWidget(te4)
+
+te1.setReadOnly(True)
+te2.setReadOnly(True)
+te3.setReadOnly(True)
+te4.setReadOnly(True)
+
+leLabel = QtWidgets.QLabel("Enter Video ID ( EX : Y2DNwLVZECM )")
+le = QtWidgets.QLineEdit(mainWindow)
+
+layout2.addWidget(leLabel)
+layout2.addWidget(le)
 
 #### Layout & Geometry End ####
 
@@ -114,14 +174,14 @@ mainWindow.setLayout(layout)
 #### Console GUI ####
 
 global consoleLog
-consoleLog = QTextEdit(mainWindow)
-consoleLog.move(5, 130)
+consoleLog = QTextEdit(label1)
+consoleLog.move(5, 180)
 consoleLog.resize(1100,300)
-consoleLog.setFontPointSize(10)
+consoleLog.setFontPointSize(11)
 consoleLog.setReadOnly(True)
 
-consoleLabel = QLabel('Console GUI', parent=mainWindow)
-consoleLabel.move(5, 100)
+consoleLabel = QLabel('Console GUI', parent=label1)
+consoleLabel.move(5, 150)
 
 #### Console GUI End ####
 
@@ -161,11 +221,11 @@ def Subscribe():
 	callProgram()
 
 # Subscribe Label #
-subLabel = QLabel('Subscribe', parent=mainWindow)
+subLabel = QLabel('Subscribe', parent=label1)
 subLabel.move(5, 0)
 
 # Subscribe Textbox #
-subBox = QLineEdit(mainWindow)
+subBox = QLineEdit(label1)
 subBox.move(5, 25)
 subBox.resize(180,20)
 subBox.returnPressed.connect(Subscribe)
@@ -209,11 +269,11 @@ def UnSubscribe():
 	callProgram()
 
 # UnSubscribe Label #
-unsubLabel = QLabel('UnSubscribe', parent=mainWindow)
+unsubLabel = QLabel('UnSubscribe', parent=label1)
 unsubLabel.move(190, 0)
 
 # UnSubscribe Textbox #
-unsubBox = QLineEdit(mainWindow)
+unsubBox = QLineEdit(label1)
 unsubBox.move(190, 25)
 unsubBox.resize(180,20)
 unsubBox.returnPressed.connect(UnSubscribe)
@@ -258,12 +318,12 @@ def showChanVids():
 	callProgram()
 
 # Channel Vid Label #
-chanVidLabel = QLabel('Show Channel\'s Videos', parent=mainWindow)
+chanVidLabel = QLabel('Show Channel\'s Videos', parent=label1)
 chanVidLabel.move(5, 50)
 chanVidLabel.resize(180, 20)
 
 # Channel Vid Textbox #
-chanVidBox = QLineEdit(mainWindow)
+chanVidBox = QLineEdit(label1)
 chanVidBox.move(5, 70)
 chanVidBox.resize(180,20)
 chanVidBox.returnPressed.connect(showChanVids)
@@ -308,12 +368,12 @@ def downloadVid():
 	callProgram()
 
 # Channel Vid Label #
-downloadVidLabel = QLabel('Download Video', parent=mainWindow)
+downloadVidLabel = QLabel('Download Video', parent=label1)
 downloadVidLabel.move(190, 50)
 downloadVidLabel.resize(180, 20)
 
 # Channel Vid Textbox #
-downloadVidBox = QLineEdit(mainWindow)
+downloadVidBox = QLineEdit(label1)
 downloadVidBox.move(190, 70)
 downloadVidBox.resize(180,20)
 downloadVidBox.returnPressed.connect(downloadVid)
@@ -341,7 +401,7 @@ def showVidInfo():
 	
 	if data['pageInfo']['totalResults'] == 0:
 		e1 = (f'Video ID "{vid}" not found!')
-		consoleLog.setFontPointSize(10)
+		consoleLog.setFontPointSize(11)
 		consoleLog.setText(e1)
 		VidInfoBox.clear()
 	elif "kind" in data['items'][0]:
@@ -356,7 +416,7 @@ def showVidInfo():
 		p9 = ('Dislikes :', str(data2['dislikes']))
 		p10 = ('Comments :', str(data['items'][0]['statistics']['commentCount']))
 		## No way to do this in a loop. Ugh ##
-		consoleLog.setFontPointSize(10)
+		consoleLog.setFontPointSize(11)
 		consoleLog.setText(str(p1))
 		consoleLog.append(str(p2))
 		consoleLog.append(str(p3))
@@ -370,12 +430,12 @@ def showVidInfo():
 		VidInfoBox.clear()
 
 # Vid Info Label #
-VidInfoLabel = QLabel('Show Video\'s Info', parent=mainWindow)
+VidInfoLabel = QLabel('Show Basic Vid Info', parent=label1)
 VidInfoLabel.move(375, 5)
 VidInfoLabel.resize(180, 20)
 
 # Vid Info Textbox #
-VidInfoBox = QLineEdit(mainWindow)
+VidInfoBox = QLineEdit(label1)
 VidInfoBox.move(375, 25)
 VidInfoBox.resize(180,20)
 VidInfoBox.returnPressed.connect(showVidInfo)
@@ -420,12 +480,12 @@ def vlcStream():
 	callProgram()
 
 # VLC Stream Label #
-vlcLabel = QLabel('Stream to VLC', parent=mainWindow)
+vlcLabel = QLabel('Stream to VLC', parent=label1)
 vlcLabel.move(375, 50)
 vlcLabel.resize(180, 20)
 
 # VLC Stream Textbox #
-vlcBox = QLineEdit(mainWindow)
+vlcBox = QLineEdit(label1)
 vlcBox.move(375, 70)
 vlcBox.resize(180,20)
 vlcBox.returnPressed.connect(vlcStream)
@@ -469,7 +529,7 @@ def updateRSS():
 	callProgram()
 
 # Update RSS Button #
-rssButton = QPushButton('Update RSS Feed', parent=mainWindow)
+rssButton = QPushButton('Update RSS Feed', parent=label1)
 rssButton.setToolTip('Update RSS Feed of Subbed Channels')
 rssButton.move(700,15)
 rssButton.resize(150,30)
@@ -511,7 +571,7 @@ def showAllChannels():
 	callProgram()
 
 # Show Channels Button #
-allChannelsButton = QPushButton('List Channels', parent=mainWindow)
+allChannelsButton = QPushButton('List Channels', parent=label1)
 allChannelsButton.setToolTip('Lists all Subbed Channels')
 allChannelsButton.move(860,15)
 allChannelsButton.resize(150,30)
@@ -555,11 +615,11 @@ def showAllVids():
 #	os.system("clear")
 #	consoleLog.clear()
 #	op1 = os.popen(f'yrs list-all-videos').read()
-#	consoleLog.setFontPointSize(10)
+#	consoleLog.setFontPointSize(11)
 #	consoleLog.setText(op1)
 
 # Show ALL Vids Button #
-showAllVidsButton = QPushButton('List ALL Vids', parent=mainWindow)
+showAllVidsButton = QPushButton('List ALL Vids', parent=label1)
 showAllVidsButton.setToolTip('Lists ALL Video\'s from subbed channels')
 showAllVidsButton.move(700,50)
 showAllVidsButton.resize(150,30)
@@ -574,11 +634,11 @@ showAllVidsButton.clicked.connect(showAllVids)
 def clearLog():
 	os.system("clear")
 	consoleLog.clear()
-	consoleLog.setFontPointSize(10)
+	consoleLog.setFontPointSize(11)
 	consoleLog.setText('Cleared')
 
 # Clear GUI Log Button #
-clearLogButton = QPushButton('Clear Log', parent=mainWindow)
+clearLogButton = QPushButton('Clear Log', parent=label1)
 clearLogButton.setToolTip('Clears the GUI Log')
 clearLogButton.move(860,50)
 clearLogButton.resize(150,30)
@@ -586,7 +646,93 @@ clearLogButton.clicked.connect(clearLog)
 
 #### Clear GUI Log Function End ####
 
+#### Advanced Info Pulling Function ####
 
+def standardInfo():
+	vid = le.text()
+
+	url = requests.get(f'https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id={vid}&key=AIzaSyA1_WyNYJOumLMknZE0OwW0IRehkJECgkk')
+	text = url.text
+	data = json.loads(text)
+
+	url2 = requests.get(f'https://returnyoutubedislikeapi.com/votes?videoId={vid}')
+	text2 = url2.text
+	data2 = json.loads(text2)
+
+	url3 = requests.get(f'https://www.googleapis.com/youtube/v3/commentThreads?key=AIzaSyA1_WyNYJOumLMknZE0OwW0IRehkJECgkk&textFormat=plainText&part=snippet&videoId={vid}&maxResults=50')
+	text3 = url3.text
+	data3 = json.loads(text3)
+
+	if data['pageInfo']['totalResults'] == 0:
+		e1 = (f'Video ID "{vid}" not found!')
+		te1.setText(e1)
+		te2.clear()
+		te3.clear()
+		te4.clear()
+	elif "kind" in data['items'][0]:
+		s1 = (f'Video URL: youtube.com/watch?v={vid}\n')
+		s2 = ('Title :', str(data['items'][0]['snippet']['title']))
+		s3 = ('Author :', str(data['items'][0]['snippet']['channelTitle']))   
+		s4 = ('Channel ID :', str(data['items'][0]['snippet']['channelId']))
+		s5 = ('Uploaded At :', str(data['items'][0]['snippet']['publishedAt']))
+		s6 = ('HD or SD? :', str(data['items'][0]['contentDetails']['definition']))
+		s7 = ('Views :', str(data['items'][0]['statistics']['viewCount']))
+		s8 = ('Likes :', str(data['items'][0]['statistics']['likeCount']))
+		s9 = ('Dislikes :', str(data2['dislikes']))
+		s10 = ('Comments :', str(data['items'][0]['statistics']['commentCount']))
+
+		thumbnail = data['items'][0]['snippet']['thumbnails']['high']['url']
+		width = data['items'][0]['snippet']['thumbnails']['high']['width']
+		height = data['items'][0]['snippet']['thumbnails']['high']['height']
+		image = QImage()
+		image.loadFromData(requests.get(thumbnail).content)
+		image_label = QLabel(te2)
+		image_label.setPixmap(QPixmap(image))
+		image_label.resize(width, height)
+		te2.resize(width, height)
+
+		d1 = ('## Description Start ##\n')
+		d2 = (str(data['items'][0]['snippet']['description']))
+		d3 = ('\n## Description End ##')
+
+		## No way to do this in a loop. Ugh ##
+		te1.setFontPointSize(11)
+		te1.setText(str(s1))
+		te1.append(str(s2))
+		te1.append(str(s3))
+		te1.append(str(s4))
+		te1.append(str(s5))
+		te1.append(str(s6))
+		te1.append(str(s7))
+		te1.append(str(s8))
+		te1.append(str(s9))
+		te1.append(str(s10))
+
+		te3.setFontPointSize(11)
+		te3.setText(str(d1))
+		te3.append(str(d2))
+		te3.append(str(d3))
+
+	if data3['pageInfo']['totalResults'] == 0:
+		c1 = (f'No Comments on this Video.')
+		te4.setText(c1)
+	else:
+		te4.clear()
+		amount = data3['pageInfo']['totalResults']
+		count = 0
+		for i in range(amount):
+			e1 = data3['items'][count]['snippet']['topLevelComment']['snippet']['authorDisplayName']
+			e2 = data3['items'][count]['snippet']['topLevelComment']['snippet']['textDisplay']
+			e3 = (f'{e1} commented : "{e2}"\n')
+			te4.append(e3)
+			count += 1
+			if count == amount:
+				break
+	le.clear()
+
+le.returnPressed.connect(standardInfo)
+
+#### Advanced Info Pulling Function End ####
 
 ##### ending agreement #####
 mainWindow.show()
