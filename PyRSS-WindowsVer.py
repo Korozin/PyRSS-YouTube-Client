@@ -104,7 +104,7 @@ import requests
 mainApp = QApplication([])
 
 mainWindow = QWidget()
-mainWindow.setGeometry(0, 0, 1140, 555)
+mainWindow.setFixedSize(1140, 555)
 mainWindow.setWindowTitle('PyRSS : KorOwOzin')
 
 layout = QGridLayout(mainWindow)
