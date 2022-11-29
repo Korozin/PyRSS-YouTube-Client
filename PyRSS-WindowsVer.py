@@ -98,6 +98,7 @@ from PyQt5.QtGui import QPixmap
 import requests
 ##### imports end #####
 
+seperator = '-' * 229
 
 #### Layout & Geometry ####
 
@@ -124,7 +125,7 @@ layout2 = QtWidgets.QVBoxLayout(label2)
 layout3 = QtWidgets.QVBoxLayout(labelA1)
 layout4 = QtWidgets.QVBoxLayout(labelA2)
 layout5 = QtWidgets.QVBoxLayout(labelA3)
-layout6 = QtWidgets.QVBoxLayout(labelA4)
+layout6 = QtWidgets.QGridLayout(labelA4)
 
 tabwidget = QTabWidget(mainWindow)
 tabwidget.addTab(label1, "Main")
@@ -154,8 +155,9 @@ layout4.addWidget(te2)
 te3 = QTextEdit(mainWindow)
 layout5.addWidget(te3)
 
-te4 = QTextEdit(mainWindow)
-layout6.addWidget(te4)
+te4 = QTextEdit(labelA4)
+te4.move(9, 9)
+te4.resize(1074, 361)
 
 te1.setReadOnly(True)
 te2.setReadOnly(True)
@@ -165,8 +167,20 @@ te4.setReadOnly(True)
 leLabel = QtWidgets.QLabel("Enter Video ID ( EX : Y2DNwLVZECM )")
 le = QtWidgets.QLineEdit(mainWindow)
 
-layout2.addWidget(leLabel)
-layout2.addWidget(le)
+layout3.addWidget(leLabel)
+layout3.addWidget(le)
+
+comLabel = QtWidgets.QLabel("Max Comment Results : ", parent=labelA4)
+comLabel.resize(180, 20)
+comLabel.move(10, 385)
+
+comle = QLineEdit(labelA4)
+comle.move(185, 380)
+comle.resize(30,30)
+
+setComLabel = QtWidgets.QLabel(parent=labelA4)
+setComLabel.resize(200, 20)
+setComLabel.move(10, 415)
 
 #### Layout & Geometry End ####
 
@@ -405,16 +419,16 @@ def showVidInfo():
 		consoleLog.setText(e1)
 		VidInfoBox.clear()
 	elif "kind" in data['items'][0]:
-		p1 = (f'Video URL: youtube.com/watch?v={vid}\n')
-		p2 = ('Title :', str(data['items'][0]['snippet']['title']))
-		p3 = ('Author :', str(data['items'][0]['snippet']['channelTitle']))   
-		p4 = ('Channel ID :', str(data['items'][0]['snippet']['channelId']))
-		p5 = ('Uploaded At :', str(data['items'][0]['snippet']['publishedAt']))
-		p6 = ('HD or SD? :', str(data['items'][0]['contentDetails']['definition']))
-		p7 = ('Views :', str(data['items'][0]['statistics']['viewCount']))
-		p8 = ('Likes :', str(data['items'][0]['statistics']['likeCount']))
-		p9 = ('Dislikes :', str(data2['dislikes']))
-		p10 = ('Comments :', str(data['items'][0]['statistics']['commentCount']))
+		p1 = (f'Video URL : youtube.com/watch?v={vid}\n')
+		p2 = ('Title : "' + str(data['items'][0]['snippet']['title']) + '"')
+		p3 = ('Author : ' + str(data['items'][0]['snippet']['channelTitle']))   
+		p4 = ('Channel ID : https://youtube.com/channel/' + str(data['items'][0]['snippet']['channelId']))
+		p5 = ('Uploaded At : ' + str(data['items'][0]['snippet']['publishedAt']))
+		p6 = ('HD or SD? : ' + str(data['items'][0]['contentDetails']['definition']).upper())
+		p7 = ('Views : ' + str(data['items'][0]['statistics']['viewCount']))
+		p8 = ('Likes : ' + str(data['items'][0]['statistics']['likeCount']))
+		p9 = ('Dislikes : ' + str(data2['dislikes']))
+		p10 = ('Comments : ' + str(data['items'][0]['statistics']['commentCount']))
 		## No way to do this in a loop. Ugh ##
 		consoleLog.setFontPointSize(11)
 		consoleLog.setText(str(p1))
@@ -648,6 +662,25 @@ clearLogButton.clicked.connect(clearLog)
 
 #### Advanced Info Pulling Function ####
 
+maxRes = 10
+
+setComLabel.setText(f'Currently set to : {maxRes}')
+comLabel.setToolTip(f"Set Max Comment Results ( The Default is {maxRes} )")
+comle.setToolTip(f'Set Max Comment Results ( The Default is {maxRes} )')
+
+def setMaxRes():
+	global maxRes
+	maxRes = comle.text()
+
+	if int(maxRes) > 100:
+		maxRes = 100
+		setComLabel.setText(f'The max is 100! Set to : {maxRes}')
+	else:
+		setComLabel.setText(f'Currently set to : {maxRes}')
+
+	comle.clear()
+	
+
 def standardInfo():
 	vid = le.text()
 
@@ -659,7 +692,7 @@ def standardInfo():
 	text2 = url2.text
 	data2 = json.loads(text2)
 
-	url3 = requests.get(f'https://www.googleapis.com/youtube/v3/commentThreads?key=AIzaSyA1_WyNYJOumLMknZE0OwW0IRehkJECgkk&textFormat=plainText&part=snippet&videoId={vid}&maxResults=50')
+	url3 = requests.get(f'https://www.googleapis.com/youtube/v3/commentThreads?key=AIzaSyA1_WyNYJOumLMknZE0OwW0IRehkJECgkk&textFormat=plainText&part=snippet&videoId={vid}&maxResults={maxRes}')
 	text3 = url3.text
 	data3 = json.loads(text3)
 
@@ -670,26 +703,30 @@ def standardInfo():
 		te3.clear()
 		te4.clear()
 	elif "kind" in data['items'][0]:
-		s1 = (f'Video URL: youtube.com/watch?v={vid}\n')
-		s2 = ('Title :', str(data['items'][0]['snippet']['title']))
-		s3 = ('Author :', str(data['items'][0]['snippet']['channelTitle']))   
-		s4 = ('Channel ID :', str(data['items'][0]['snippet']['channelId']))
-		s5 = ('Uploaded At :', str(data['items'][0]['snippet']['publishedAt']))
-		s6 = ('HD or SD? :', str(data['items'][0]['contentDetails']['definition']))
-		s7 = ('Views :', str(data['items'][0]['statistics']['viewCount']))
-		s8 = ('Likes :', str(data['items'][0]['statistics']['likeCount']))
-		s9 = ('Dislikes :', str(data2['dislikes']))
-		s10 = ('Comments :', str(data['items'][0]['statistics']['commentCount']))
+		s1 = (f'Video URL : youtube.com/watch?v={vid}\n')
+		s2 = ('Title : "' + str(data['items'][0]['snippet']['title']) + '"')
+		s3 = ('Author : ' + str(data['items'][0]['snippet']['channelTitle']))   
+		s4 = ('Channel ID : https://youtube.com/channel/' + str(data['items'][0]['snippet']['channelId']))
+		s5 = ('Uploaded At : ' + str(data['items'][0]['snippet']['publishedAt']))
+		s6 = ('HD or SD? : ' + str(data['items'][0]['contentDetails']['definition']).upper())
+		s7 = ('Views : ' + str(data['items'][0]['statistics']['viewCount']))
+		s8 = ('Likes : ' + str(data['items'][0]['statistics']['likeCount']))
+		s9 = ('Dislikes : ' + str(data2['dislikes']))
+		s10 = ('Comments : ' + str(data['items'][0]['statistics']['commentCount']))
 
-		thumbnail = data['items'][0]['snippet']['thumbnails']['high']['url']
-		width = data['items'][0]['snippet']['thumbnails']['high']['width']
-		height = data['items'][0]['snippet']['thumbnails']['high']['height']
+		thumbnail = data['items'][0]['snippet']['thumbnails']['standard']['url']
+		width = data['items'][0]['snippet']['thumbnails']['standard']['width']
+		height = data['items'][0]['snippet']['thumbnails']['standard']['height']
 		image = QImage()
 		image.loadFromData(requests.get(thumbnail).content)
 		image_label = QLabel(te2)
 		image_label.setPixmap(QPixmap(image))
 		image_label.resize(width, height)
-		te2.resize(width, height)
+		image_label.move(0, -25)
+		te2.setText(f'{" " * 166}URL 1 : https://i.ytimg.com/vi/{vid}/default.jpg')
+		te2.append(f'{" " * 166}URL 2 : https://i.ytimg.com/vi/{vid}/mqdefault.jpg')
+		te2.append(f'{" " * 166}URL 3 : https://i.ytimg.com/vi/{vid}/hqdefault.jpg')
+		te2.append(f'{" " * 166}URL 4 : https://i.ytimg.com/vi/{vid}/sddefault.jpg')
 
 		d1 = ('## Description Start ##\n')
 		d2 = (str(data['items'][0]['snippet']['description']))
@@ -718,19 +755,44 @@ def standardInfo():
 		te4.setText(c1)
 	else:
 		te4.clear()
+
 		amount = data3['pageInfo']['totalResults']
 		count = 0
 		for i in range(amount):
 			e1 = data3['items'][count]['snippet']['topLevelComment']['snippet']['authorDisplayName']
 			e2 = data3['items'][count]['snippet']['topLevelComment']['snippet']['textDisplay']
-			e3 = (f'{e1} commented : "{e2}"\n')
+			e3 = (f'{seperator}\n')
+			e4 = (f'@{e1} ⬇')
+			e5 = (f': "{e2}"\n')
+
+			blackColor = QColor(0, 0, 0)
+			te4.setTextColor(blackColor)
+
 			te4.append(e3)
+
+			redColor = QColor(255, 0, 0)
+			te4.setTextColor(redColor)
+
+			te4.append(e4)
+
+			blackColor = QColor(0, 0, 0)
+			te4.setTextColor(blackColor)
+
+			te4.append(e5)
+
 			count += 1
+
 			if count == amount:
+				te4.append(seperator)
+				te4.moveCursor(QTextCursor.Start)
 				break
+
+	te3.verticalScrollBar().setValue(0)
+
 	le.clear()
 
 le.returnPressed.connect(standardInfo)
+comle.returnPressed.connect(setMaxRes)
 
 #### Advanced Info Pulling Function End ####
 
