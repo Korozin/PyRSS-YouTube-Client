@@ -357,12 +357,14 @@ def downloadVid():
 		cursor.insertText(process.readAll().data().decode())
 		output.ensureCursorVisible()
 		downloadVidBox.clear()
+		consoleLog.moveCursor(QTextCursor.End)
 
 	def callProgram():
 		output.clear()
 		downloadText = downloadVidBox.text()
 		consoleLog.setText(f'Video Set: {downloadText}\n\n')
 		process.start(f'youtube-dl {downloadText}')
+		consoleLog.moveCursor(QTextCursor.End)
 
 	def startDownload():
 		global output
@@ -374,14 +376,14 @@ def downloadVid():
 
 		process.started.connect(lambda: downloadVidBox.setEnabled(False))
 		process.finished.connect(lambda: downloadVidBox.setEnabled(True))
-
+		consoleLog.moveCursor(QTextCursor.End)		
 
 	os.system("clear")
 	consoleLog.clear()
 	startDownload()
 	callProgram()
 
-# Channel Vid Label #
+# Channel Vid Label # 0wXJg3oG-Pc
 downloadVidLabel = QLabel('Download Video', parent=label1)
 downloadVidLabel.move(190, 50)
 downloadVidLabel.resize(180, 20)
